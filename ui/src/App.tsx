@@ -57,7 +57,7 @@ function App() {
 
   return (
       <div>
-        <h1>Raspberry Pi WebSocket Interface</h1>
+        <h1>TaxEvader WebSocket Interface</h1>
         <div>
           <label>
             Direction:{' '}
