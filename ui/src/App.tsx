@@ -12,7 +12,7 @@ function App() {
   const [stepDelay, setStepDelay] = useState<number>(1000);
 
   useEffect(() => {
-    const ws = new WebSocket('ws://' + window.location.hostname + ':8080');
+    const ws = new WebSocket('ws://192.168.1.9:8080');
     setWs(ws);
 
     ws.onopen = () => {
