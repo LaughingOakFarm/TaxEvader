@@ -60,8 +60,9 @@ function App() {
       }} onClick={function() {
           const newScore = score + 1;
           handleScoreChange(newScore);
-          const duration = (newScore * 1000)/2;
+          const duration = Math.min((newScore * 1000)/2, 3000);
           const end = Date.now() + duration;
+          const particleCount = Math.min(newScore*2, 20);
 
           (function frame() {
               // launch a few confetti from the left edge
@@ -72,7 +73,7 @@ function App() {
                   gravity: .75,
 
                   startVelocity: 100,
-                  particleCount: newScore*1.5,
+                  particleCount: particleCount,
                   colors: [ '#ff3860', '#e85a74', '#960e28'],
               });
 
@@ -84,7 +85,7 @@ function App() {
                   gravity: .75,
 
                   startVelocity: 100,
-                  particleCount: newScore*1.5,
+                  particleCount: particleCount,
                   colors: [ '#ff3860', '#e85a74', '#960e28'],
               });
 
