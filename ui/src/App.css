@@ -1,0 +1,22 @@
+.number {
+    font-size:600px;
+    display:flex;
+    font-family: sans-serif;
+    color: #494949;
+}
+
+.number.pop {
+    animation: pop 1s;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
