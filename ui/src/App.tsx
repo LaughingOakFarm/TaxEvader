@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import confetti from 'canvas-confetti';
+import './App.css';
 
 interface EventData {
   type: string;
@@ -6,10 +8,20 @@ interface EventData {
 }
 
 function App() {
-  const [ws, setWs] = useState<WebSocket | null>(null);
-  const [events, setEvents] = useState<EventData[]>([]);
-  const [direction, setDirection] = useState<number>(1);
-  const [stepDelay, setStepDelay] = useState<number>(1000);
+    const [score, setScore] = useState(0);
+    const [isUpdated, setIsUpdated] = useState(false);
+
+    useEffect(() => {
+        if (isUpdated) {
+            const timeoutId = setTimeout(() => setIsUpdated(false), 1000);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [isUpdated]);
+
+    const handleScoreChange = (score: number) => {
+        setScore(score);
+        setIsUpdated(true);
+    };
 
   useEffect(() => {
     const ws = new WebSocket('ws://192.168.1.9:8080');
@@ -21,13 +33,10 @@ function App() {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data) as EventData;
-      setEvents((prevEvents) => {
-        const newEvents = [...prevEvents, data];
-        if (newEvents.length > 20) {
-          newEvents.shift();
-        }
-        return newEvents;
-      });
+      console.log("new event", data);
+      if(data.type === "score") {
+          handleScoreChange(data.score);
+      }
     };
 
     ws.onclose = () => {
@@ -39,55 +48,55 @@ function App() {
     };
   }, []);
 
-  const updateStepperDirection = () => {
-    if (ws) {
-      ws.send(
-          JSON.stringify({ type: 'updateStepperDirection', direction: direction })
-      );
-    }
-  };
-
-  const updateStepperSpeed = () => {
-    if (ws) {
-      ws.send(
-          JSON.stringify({ type: 'updateStepperSpeed', stepDelay: stepDelay })
-      );
-    }
-  };
-
   return (
-      <div>
-        <h1>TaxEvader WebSocket Interface</h1>
-        <div>
-          <label>
-            Direction:{' '}
-            <select
-                value={direction}
-                onChange={(e) => setDirection(Number(e.target.value))}
-            >
-              <option value={1}>Clockwise</option>
-              <option value={0}>Counterclockwise</option>
-            </select>
-          </label>
-          <button onClick={updateStepperDirection}>Update Direction</button>
-        </div>
-        <div>
-          <label>
-            Step Delay:{' '}
-            <input
-                type="number"
-                value={stepDelay}
-                onChange={(e) => setStepDelay(Number(e.target.value))}
-            />
-          </label>
-          <button onClick={updateStepperSpeed}>Update Speed</button>
-        </div>
-        <h2>Events</h2>
-        <ul>
-          {events.map((event, index) => (
-              <li key={index}>{JSON.stringify(event)}</li>
-          ))}
-        </ul>
+      <div
+          style={{
+            display: 'flex',
+            height: '100vh',
+            backgroundImage: 'url(TaxEvader.jpg)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            justifyContent: 'center',
+            alignItems: 'center'
+      }} onClick={function() {
+          const newScore = score + 1;
+          handleScoreChange(newScore);
+          const duration = Math.min((newScore * 1000)/2, 3000);
+          const end = Date.now() + duration;
+          const particleCount = Math.min(newScore*2, 20);
+
+          (function frame() {
+              // launch a few confetti from the left edge
+              confetti({
+                  angle: 45,
+                  spread: 55,
+                  origin: { x: 0, y:1 },
+                  gravity: .75,
+
+                  startVelocity: 100,
+                  particleCount: particleCount,
+                  colors: [ '#ff3860', '#e85a74', '#960e28'],
+              });
+
+              // and launch a few from the right edge
+              confetti({
+                  angle: 135,
+                  spread: 55,
+                  origin: { x: 1, y:1 },
+                  gravity: .75,
+
+                  startVelocity: 100,
+                  particleCount: particleCount,
+                  colors: [ '#ff3860', '#e85a74', '#960e28'],
+              });
+
+              // keep going until we are out of time
+              if (Date.now() < end) {
+                  requestAnimationFrame(frame);
+              }
+          }());
+      }}>
+          <div className={`number ${isUpdated ? 'pop' : ''}`}>{score}</div>
       </div>
   );
 }

@@ -8,9 +8,9 @@ const clk = new Gpio(23, 'in', 'both');
 const dt = new Gpio(24, 'in', 'both');
 const sw = new Gpio(12, 'in', 'rising', { debounceTimeout: 10 });
 
-// Ultrasonic Sensor
-const trig = new Gpio(5, 'out');
-const echo = new Gpio(6, 'in', 'both');
+// Limit Switch
+const LIMIT_SWITCH_PIN = 24;
+const limitSwitch = new Gpio(LIMIT_SWITCH_PIN, 'in', 'both');
 
 // Optocoupler
 const optoOut = new Gpio(25, 'in', 'falling');
@@ -25,6 +25,10 @@ let counter = 0;
 // Stepper motor rotation parameters
 let stepDelay = 1000; // Default delay between steps (microseconds)
 let direction: 0 | 1 = 1; // Default direction: 1 for clockwise, 0 for counterclockwise
+
+// Debounce configuration
+const DEBOUNCE_TIME = 50; // Debounce time in milliseconds
+let buttonPressTimestamp: number | null = null;
 
 // Stepper motor rotation loop
 async function rotateStepper() {
@@ -58,9 +62,37 @@ wss.on('connection', (ws: WebSocket) => {
         ws.send(JSON.stringify({ type: 'encoder', counter: counter }));
     });
 
-    sw.watch((err) => {
+    // Handle button press event for rotary encoder
+    sw.watch((err, value) => {
         if (err) throw err;
-        ws.send(JSON.stringify({ type: 'encoderButton', pressed: true }));
+
+        if (value === 0) { // Button press detected
+            const currentTime = Date.now();
+            if (!buttonPressTimestamp || currentTime - buttonPressTimestamp > DEBOUNCE_TIME) {
+                buttonPressTimestamp = currentTime;
+
+                // Handle button press event
+                console.log('Button pressed');
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({ type: 'button', state: 'pressed' }));
+                    }
+                });
+            }
+        }
+    });
+
+    // Handle Limit Switch state changes
+    limitSwitch.watch((err, value) => {
+        if (err) throw err;
+
+        const state = value === 1 ? 'open' : 'closed';
+        console.log(`Limit Switch: ${state}`);
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ type: 'limitSwitch', state }));
+            }
+        });
     });
 
     // Optocoupler
@@ -81,41 +113,11 @@ wss.on('connection', (ws: WebSocket) => {
         if (data.type === 'updateStepperSpeed') {
             stepDelay = data.stepDelay;
         }
-
-        // Ultrasonic sensor
-        if (data.type === 'measureDistance') {
-            const distance = await measureDistance();
-            ws.send(JSON.stringify({ type: 'distance', distance: distance }));
-        }
     });
 });
 
 function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function measureDistance(): Promise<number> {
-    return new Promise((resolve, reject) => {
-        let start: bigint;
-        let end: bigint;
-
-        echo.watch((err, value) => {
-            if (err) reject(err);
-
-            if (value === 1) {
-                start = process.hrtime.bigint();
-            } else {
-                end = process.hrtime.bigint();
-                echo.unwatchAll();
-                resolve(Number(end - start) / 1e6 / 2 / 29.1);
-            }
-        });
-
-        trig.writeSync(1);
-        setTimeout(() => {
-            trig.writeSync(0);
-        }, 10);
-    });
 }
 
 // Start the stepper motor rotation loop
