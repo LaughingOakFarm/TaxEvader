@@ -14,6 +14,7 @@ interface IHighScoreHustleProps {
 
 export function HighScoreHustle({ onNewScore, onExit }: IHighScoreHustleProps) {
     const [score, setScore] = useState(0);
+    const [streak, setStreak] = useState(0);
     const countingDown = useRef(false);
     const startTime = useRef(0);
     const timeLimit = minute;
@@ -50,9 +51,15 @@ export function HighScoreHustle({ onNewScore, onExit }: IHighScoreHustleProps) {
         },
         [score]
     );
-    const flash = usePointScored(function _onScore() {
-        setScore((s) => s + 1);
-    });
+    const flash = usePointScored(
+        function _onScore() {
+            setScore((scr) => scr + 1 + streak);
+            setStreak((strk) => strk + 1);
+        },
+        function _onFail() {
+            setStreak(0);
+        }
+    );
     useEffect(
         function () {
             return listenToEvent("knob-pressed", function (event) {
@@ -72,6 +79,12 @@ export function HighScoreHustle({ onNewScore, onExit }: IHighScoreHustleProps) {
                     style={{ lineHeight: 1 }}
                 >
                     Count Down {minutes}:{seconds.toString().padStart(2, "0")}
+                </div>
+                <div
+                    className={"game-screen-detail font-mono"}
+                    style={{ lineHeight: 1 }}
+                >
+                    Streak {streak}
                 </div>
                 <div
                     className={"game-screen-detail font-mono"}

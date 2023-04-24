@@ -15,19 +15,22 @@ export function usePointScored(onSuccess: () => void, onError?: () => void) {
                         onError?.();
                     }
                     isThrough.current = false;
-                }, 1_000);
+                }, 500);
             });
         },
         [onError]
     );
-    const onAfter = useCallback(function () {
-        if (isThrough.current) {
-            isThrough.current = false;
-            onSuccess();
-            setFlash(true);
-            sounds.marioCoin();
-        }
-    }, []);
+    const onAfter = useCallback(
+        function () {
+            if (isThrough.current) {
+                isThrough.current = false;
+                onSuccess();
+                setFlash(true);
+                sounds.marioCoin();
+            }
+        },
+        [onSuccess]
+    );
     useEffect(
         function () {
             if (flash) {

@@ -43,54 +43,54 @@ async function rotateStepper() {
 
 let turnEventCounter = 0;
 // Handle knob turn event for rotary encoder
-clk.watch(function _knobTurnEvent(err, clockValue) {
-    if (err) throw err;
-    if (++turnEventCounter % 2 !== 0) {
-        return;
-    }
-    const direction = dt.readSync();
-    notifyClients({
-        type: "knob-turn",
-        direction: direction === clockValue ? "left" : "right"
-    });
-});
+// clk.watch(function _knobTurnEvent(err, clockValue) {
+//     if (err) throw err;
+// if (++turnEventCounter % 2 !== 0) {
+//     return;
+// }
+// const direction = dt.readSync();
+// notifyClients({
+//     type: "knob-turn",
+//     direction: direction === clockValue ? "left" : "right"
+// });
+// });
 
 let pressed = false;
 let pressEventTimeout: NodeJS.Timeout;
 // Handle button press event for rotary encoder
-sw.watch(function _knobPressedEvent(err) {
-    if (err) throw err;
-    if (pressEventTimeout) {
-        clearTimeout(pressEventTimeout);
-    }
-    if (pressed) {
-        pressed = false;
-        notifyClients({ type: "knob-pressed", pressed });
-    } else {
-        pressEventTimeout = setTimeout(function () {
-            pressed = true;
-            notifyClients({ type: "knob-pressed", pressed });
-        }, 100);
-    }
-});
+// sw.watch(function _knobPressedEvent(err) {
+//     if (err) throw err;
+// if (pressEventTimeout) {
+//     clearTimeout(pressEventTimeout);
+// }
+// if (pressed) {
+//     pressed = false;
+//     notifyClients({ type: "knob-pressed", pressed });
+// } else {
+//     pressEventTimeout = setTimeout(function () {
+//         pressed = true;
+//         notifyClients({ type: "knob-pressed", pressed });
+//     }, 100);
+// }
+// });
 
 // Pre-Wheel Sensor
-optoOutPre.watch(function PreWheelEvent(err) {
-    if (err) throw err;
-    notifyClients({ type: "pre-wheel", triggered: true });
-});
+// optoOutPre.watch(function PreWheelEvent(err) {
+//     if (err) throw err;
+// notifyClients({ type: "pre-wheel", triggered: true });
+// });
 
 // Post-Wheel Sensor (bottom)
-optoOutPost.watch(function _postWheelEventBottom(err) {
-    if (err) throw err;
-    notifyClients({ type: "post-wheel-bottom", triggered: true });
-});
+// optoOutPost.watch(function _postWheelEventBottom(err) {
+//     if (err) throw err;
+// notifyClients({ type: "post-wheel-bottom", triggered: true });
+// });
 
 // Post-Wheel Sensor (Top)
-optoOutPostTop.watch(function _postWheelEventTop(err) {
-    if (err) throw err;
-    notifyClients({ type: "post-wheel-top", triggered: true });
-});
+// optoOutPostTop.watch(function _postWheelEventTop(err) {
+//     if (err) throw err;
+// notifyClients({ type: "post-wheel-top", triggered: true });
+// });
 
 wss.on("connection", function _connectionEvent(ws: WebSocket) {
     console.log("Client connected");
