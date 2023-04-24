@@ -1,22 +1,308 @@
-.number {
-    font-size:600px;
-    display:flex;
-    font-family: sans-serif;
-    color: #494949;
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Press+Start+2P&family=Roboto+Mono:wght@700&display=swap');
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: black;
+    color: white;
+    font-family: 'Bangers', cursive;
 }
 
-.number.pop {
-    animation: pop 1s;
+/* GAME SELECTION SCREEN */
+
+.game-selection-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
 }
 
-@keyframes pop {
+.game-selection-button {
+    font-family: inherit;
+    background-color: #4CAF50; /* Green */
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    height: 100vh;
+    width: 33.333%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    line-height: 1.6;
+    background-size: cover;
+    background-position: center;
+    text-shadow: 0 3px 10px black;
+    font-weight: bolder;
+    box-shadow: 0 0 0 4px black;
+    position: relative;
+}
+
+.game-selection-button.is-active::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.game-selection-button:hover {
+    background-color: #3e8e41;
+}
+
+.game-selection-button-title {
+    font-size: 50px;
+    text-align: center;
+    letter-spacing: 3px;
+}
+
+.game-selection-button-title,
+.game-selection-button-description,
+.game-selection-button-high-score {
+    background: rgba(0, 0, 0, 0.3);
+    margin: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+}
+
+.game-selection-button-description {
+    font-size: 24px;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.game-selection-button-high-score {
+    font-size: 24px;
+    margin-top: auto;
+}
+
+.game-selection-start {
+    font-size: 100px;
+    font-family: 'Bangers', cursive;
+    margin-top: 50px;
+}
+
+/* HIGH SCORE TABLE */
+
+.high-score-table {
+    font-size: 24px;
+    width: calc(100% - 20px);
+    font-family: 'Press Start 2P', cursive;
+}
+
+.high-score-table td {
+    text-align: left;
+    padding: 5px;
+}
+
+.high-score-table td:nth-child(2) {
+    padding: 5px 40px;
+}
+
+
+/* GAME SCREEN */
+
+.game-screen {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    width: 100%;
+    line-height: 1.6;
+}
+
+.game-screen-left {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    background: black;
+    color: white;
+    height: 100vh;
+    width: 100%;
+}
+
+.game-screen-right {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+    height: 100vh;
+    width: 100%;
+    background-position: center;
+    box-shadow: inset 0 0 30px 30px black;
+}
+
+.game-screen-title {
+    font-size: 65px;
+    text-align: center;
+    border-bottom: 4px solid white;
+    letter-spacing: 3px;
+}
+
+.game-screen-detail {
+    font-size: 60px;
+    text-align: center;
+    letter-spacing: 3px;
+}
+
+.game-screen-score-table {
+    width: calc(100% - 80px);
+    font-size: 40px;
+}
+
+.game-screen-score-table td:nth-child(2) {
+    text-align: center;
+}
+
+.game-screen-score-table td:nth-child(3) {
+    text-align: right;
+}
+
+/* ENTER INITIALS SCREEN */
+
+.enter-initials-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+    height: 100vh;
+    width: 100%;
+    background-position: center;
+    background-size: cover;
+}
+
+.enter-initials-screen-title {
+    font-size: 65px;
+    text-align: center;
+    border-bottom: 4px solid white;
+}
+
+.enter-initials-screen-name {
+    font-size: 60px;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.enter-initials-screen-name-characters {
+    font-size: 60px;
+    text-align: center;
+    width: calc(100% - 40%);
+    transition: all 0.2s ease-in-out;
+}
+
+.enter-initials-screen-character {
+    font-size: 60px;
+    text-align: center;
+    width: 10%;
+    margin: 4px;
+    height: 100px;
+    font-family: 'Bangers', cursive;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.5);
+    color: white;
+    cursor: pointer;
+}
+
+.enter-initials-screen-character.is-active,
+.enter-initials-screen-character:hover {
+    background: white;
+    border-color: black;
+    border-width: 2px;
+    color: black;
+    text-shadow: none !important;
+}
+
+.enter-initials-screen-icon {
+    width: 42px;
+}
+
+/* UTILITY CLASSES */
+
+.black-stroke {
+    text-shadow:
+        2px 0 1px black,
+        0 2px 1px black,
+        -2px 0 1px black,
+        0 -2px 1px black;
+}
+
+.font-banger {
+    font-family: 'Bangers', cursive;
+}
+
+.font-press-start {
+    font-family: 'Press Start 2P', cursive;
+    letter-spacing: 4px;
+}
+
+.font-mono {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 700;
+}
+
+.animate-flash {
+    animation: flash 0.2s linear;
+}
+
+.animate-shake {
+    animation: shake 0.2s linear;
+}
+
+.animate-hover {
+    animation: hover 3s linear infinite;
+}
+
+/* ANIMATIONS */
+
+@keyframes flash {
     0% {
-        transform: scale(1);
+        color: white;
     }
     50% {
-        transform: scale(1.5);
+        color: black;
     }
     100% {
-        transform: scale(1);
+        color: white;
+    }
+}
+
+@keyframes hover {
+    0% {
+        transform: scale(1) translateY(0);
+    }
+    50% {
+        transform: scale(1.1) translateY(-2px);
+    }
+    100% {
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+    33% {
+        transform: translateX(10px);
+    }
+    66% {
+        transform: translateX(-10px);
+    }
+    100% {
+        transform: translateX(0);
     }
 }
