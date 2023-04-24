@@ -44,14 +44,18 @@ html, body {
     position: relative;
 }
 
-.game-selection-button.is-active::before {
+.game-selection-button::before {
     position: absolute;
     content: '';
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.game-selection-button.is-active::before {
+    background-color: rgba(0, 0, 0, 0.75);
 }
 
 .game-selection-button:hover {
@@ -141,6 +145,7 @@ html, body {
     height: 100vh;
     width: 100%;
     background-position: center;
+    background-size: cover;
     box-shadow: inset 0 0 30px 30px black;
 }
 
